@@ -5,25 +5,66 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const todos = [
   { id: "sou", title: "Dummy1" },
-  { id: 2, title: "Dummy2" },
-  { id: 3, title: "Dummy3" },
-  { id: 4, title: "Dummy4" },
-  { id: 5, title: "Dummy5" },
-  { id: 6, title: "Dummy6" },
-  { id: 7, title: "Dummy7" },
-  { id: 8, title: "Dummy8" },
+  { id: "df", title: "Dummy2" },
+  { id: "sdf", title: "Dummy3" },
+  { id: "po", title: "Dummy4" },
+  { id: "sdp", title: "Dummy5" },
+  { id: "lpo", title: "Dummy6" },
+  { id: "poi", title: "Dummy7" },
+  { id: "mlk", title: "Dummy8" },
+];
+const todos1 = [
+  { id: "oijh", title: "Dummy9" },
+  { id: "kji", title: "Dummy10" },
+  { id: "sdfr", title: "Dummy11" },
+  { id: "uyhb", title: "Dummy12" },
+  { id: "b", title: "Dummy13" },
+  { id: "kmn", title: "Dummy14" },
+  { id: "qw", title: "Dummy15" },
+  { id: "yt", title: "Dummy16" },
 ];
 
 const Todos = () => {
-  const [characters, updateCharacters] = useState(todos);
+  const [importantTodo, setImportnctTodo] = useState(todos);
+  const [normalTodo, setNormalTodo] = useState(todos1);
 
   const handleOnDragEnd = (res) => {
-    const items = Array.from(characters);
-    const [reorderItem] = items.splice(res.source.index, 1);
-    items.splice(res.destination.index, 0, reorderItem);
-    updateCharacters(items);
-    // console.log("reorderItem:", reorderItem);
+    const {
+      destination: { droppableId: dest, index: destIndx },
+      source: { droppableId: src, index: srcIndx },
+    } = res;
+
+    const sourceArr = Array.from(
+      src === "important" ? importantTodo : normalTodo
+    );
+    const [reorderItem] = sourceArr.splice(srcIndx, 1);
+
+    if (dest === src) {
+      sourceArr.splice(destIndx, 0, reorderItem);
+      src === "important"
+        ? setImportnctTodo(sourceArr)
+        : setNormalTodo(sourceArr);
+    } else {
+      const targetArr = Array.from(
+        dest === "important" ? importantTodo : normalTodo
+      );
+      targetArr.splice(destIndx, 0, reorderItem);
+      if (src === "important") {
+        setImportnctTodo(sourceArr);
+        setNormalTodo(targetArr);
+      } else {
+        setImportnctTodo(targetArr);
+        setNormalTodo(sourceArr);
+      }
+    }
+    // const sourceArr=Array.from(dest==="important"?importantTodo:normalTodo)
+    // const targetArr=Array.from(src==="important"?importantTodo:normalTodo)
+    // const items = Array.from(importantTodo);
+    // const [reorderItem] = items.splice(res.source.index, 1);
+    // items.splice(res.destination.index, 0, reorderItem);
+    // setImportnctTodo(items);
   };
+
   return (
     <Box>
       <Heading m={"20px 0"} size={"lg"}>
@@ -31,7 +72,7 @@ const Todos = () => {
       </Heading>
       <Flex justifyContent={"space-around"}>
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="characters">
+          <Droppable droppableId="important">
             {(provided) => (
               <Box
                 w={"40%"}
@@ -40,7 +81,7 @@ const Todos = () => {
                 ref={provided.innerRef}
               >
                 <Heading size={"md"}>Important</Heading>
-                {characters.map((item, index) => {
+                {importantTodo.map((item, index) => {
                   return (
                     <TodoList
                       key={item.id}
@@ -52,14 +93,31 @@ const Todos = () => {
               </Box>
             )}
           </Droppable>
+          <Droppable droppableId="normal">
+            {(provided) => (
+              <Box
+                w={"40%"}
+                border={"1px solid black"}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                <Heading size={"md"}>Normal</Heading>
+                {normalTodo.map((item, index) => {
+                  return (
+                    <TodoList
+                      key={item.id}
+                      props={{ item, type: "green", index }}
+                    />
+                  );
+                })}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
         </DragDropContext>
-
-        <Box w={"40%"} border={"1px solid black"}>
-          <Heading size={"md"}>Low</Heading>
-          {/* {todos.map((item) => {
-            return <TodoList key={item.id} props={{ item, type: "green" }} />;
-          })} */}
-        </Box>
+        {/* <DragDropContext onDragEnd={handleOnDragEnd1}>
+         
+        </DragDropContext> */}
       </Flex>
     </Box>
   );
