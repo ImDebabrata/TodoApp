@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, Heading, Flex } from "@chakra-ui/react";
+import { Box, Heading, Flex, useDisclosure, Button } from "@chakra-ui/react";
 import TodoList from "../Components/TodoList";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import TodoModal from "../Components/TodoModal";
 
 const todos = [
   { id: "sou", title: "Dummy1" },
@@ -27,6 +28,7 @@ const todos1 = [
 const Todos = () => {
   const [importantTodo, setImportnctTodo] = useState(todos);
   const [normalTodo, setNormalTodo] = useState(todos1);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleOnDragEnd = (res) => {
     const {
@@ -70,6 +72,8 @@ const Todos = () => {
       <Heading m={"20px 0"} size={"lg"}>
         Todo
       </Heading>
+      <Button onClick={onOpen}>Add New Todo</Button>
+      <TodoModal isOpen={isOpen} onClose={onClose} />
       <Flex justifyContent={"space-around"}>
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable droppableId="important">
