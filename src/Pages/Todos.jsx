@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  modifyImportantTodo,
+  modifyNormalTodo,
+} from "../Redux/TodoReducer/reducer";
 import { Box, Heading, Flex, useDisclosure, Button } from "@chakra-ui/react";
 import TodoList from "../Components/TodoList";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -26,9 +31,11 @@ const todos1 = [
 ];
 
 const Todos = () => {
-  const [importantTodo, setImportnctTodo] = useState(todos);
-  const [normalTodo, setNormalTodo] = useState(todos1);
+  // const [importantTodo, setImportnctTodo] = useState(todos);
+  // const [normalTodo, setNormalTodo] = useState(todos1);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { importantTodo, normalTodo } = useSelector((store) => store.todo);
+  const dispatch = useDispatch();
 
   const handleOnDragEnd = (res) => {
     const {
@@ -44,19 +51,19 @@ const Todos = () => {
     if (dest === src) {
       sourceArr.splice(destIndx, 0, reorderItem);
       src === "important"
-        ? setImportnctTodo(sourceArr)
-        : setNormalTodo(sourceArr);
+        ? dispatch(modifyImportantTodo(sourceArr))
+        : dispatch(modifyNormalTodo(sourceArr));
     } else {
       const targetArr = Array.from(
         dest === "important" ? importantTodo : normalTodo
       );
       targetArr.splice(destIndx, 0, reorderItem);
       if (src === "important") {
-        setImportnctTodo(sourceArr);
-        setNormalTodo(targetArr);
+        dispatch(modifyImportantTodo(sourceArr));
+        dispatch(modifyNormalTodo(targetArr));
       } else {
-        setImportnctTodo(targetArr);
-        setNormalTodo(sourceArr);
+        dispatch(modifyImportantTodo(targetArr));
+        dispatch(modifyNormalTodo(sourceArr));
       }
     }
     // const sourceArr=Array.from(dest==="important"?importantTodo:normalTodo)
