@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,10 +14,37 @@ import {
   Button,
   Select,
 } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { addImportantTodo, addNormalTodo } from "../Redux/TodoReducer/reducer";
+
+const initialState = {
+  title: "",
+  category: "",
+};
 
 const TodoModal = ({ isOpen, onClose }) => {
+  const [newTodo, setNewTodo] = useState(initialState);
+  const dispatch = useDispatch();
+
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
+
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setNewTodo({ ...newTodo, [name]: value, id: Date.now() });
+  };
+
+  const handleSubmit = () => {
+    if (!newTodo.category || !newTodo.title) {
+      alert("Please fill input");
+    } else {
+      newTodo.category === "important"
+        ? dispatch(addImportantTodo(newTodo))
+        : dispatch(addNormalTodo(newTodo));
+      console.log(newTodo);
+    }
+    onClose();
+  };
 
   return (
     <>
@@ -34,11 +61,21 @@ const TodoModal = ({ isOpen, onClose }) => {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Title</FormLabel>
-              <Input ref={initialRef} placeholder="Enter Title" />
+              <Input
+                name="title"
+                value={newTodo.title}
+                onChange={handleChange}
+                ref={initialRef}
+                placeholder="Enter Title"
+              />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Catagory</FormLabel>
-              <Select>
+              <FormLabel>Category</FormLabel>
+              <Select
+                name="category"
+                value={newTodo.category}
+                onChange={handleChange}
+              >
                 <option value={""}>Select Todo Catagory</option>
                 <option value={"important"}>Important</option>
                 <option value={"normal"}>Normal</option>
@@ -47,7 +84,7 @@ const TodoModal = ({ isOpen, onClose }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
+            <Button onClick={handleSubmit} colorScheme="blue" mr={3}>
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>
