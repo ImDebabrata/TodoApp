@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FormControl,
   FormLabel,
@@ -6,8 +7,11 @@ import {
   Input,
   Heading,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { signupUser } from "../Redux/AuthReducer/reducer";
 
 const initialField = {
   email: "",
@@ -16,6 +20,9 @@ const initialField = {
 
 const Signup = () => {
   const [fieldInfo, setFieldInfo] = useState(initialField);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +31,30 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("fieldInfo:", fieldInfo);
+    dispatch(signupUser(fieldInfo)).then((res) => {
+      console.log(res);
+      if (res.type === "Authentication/signupSuccess") {
+        toast({
+          title: "Account created.",
+          description: res.payload,
+          position: "top",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "🙁",
+          description: res.payload,
+          position: "top",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    });
+    // console.log("fieldInfo:", fieldInfo);
   };
   return (
     <Box

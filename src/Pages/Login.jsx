@@ -1,13 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FormControl,
   FormLabel,
   Box,
   Input,
   Heading,
+  useToast,
   Button,
 } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
+import { loginUser } from "../Redux/AuthReducer/reducer";
 
 const initialField = {
   email: "",
@@ -16,7 +19,10 @@ const initialField = {
 
 const Login = () => {
   const [fieldInfo, setFieldInfo] = useState(initialField);
-  const store = useSelector((store) => console.log(store));
+  const navigate = useNavigate();
+  // const store = useSelector((store) => console.log(store));
+  const toast = useToast();
+  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +31,30 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("fieldInfo:", fieldInfo);
+    dispatch(loginUser(fieldInfo)).then((res) => {
+      if (res.type === "Authentication/loginSuccess") {
+        toast({
+          title: "Success",
+          description: res.payload,
+          position: "top",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        navigate("/todos");
+      } else {
+        toast({
+          title: "😯",
+          description: res.payload,
+          position: "top",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    });
+
+    // console.log("fieldInfo:", fieldInfo);
   };
   return (
     <Box
