@@ -14,7 +14,7 @@ import {
   Button,
   Select,
 } from "@chakra-ui/react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addImportantTodo, addNormalTodo } from "../Redux/TodoReducer/reducer";
 
 const initialState = {
@@ -25,6 +25,7 @@ const initialState = {
 const TodoModal = ({ isOpen, onClose }) => {
   const [newTodo, setNewTodo] = useState(initialState);
   const dispatch = useDispatch();
+  const user = useSelector((store) => console.log(store));
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);

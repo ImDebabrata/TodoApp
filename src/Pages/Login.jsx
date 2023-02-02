@@ -35,7 +35,7 @@ const Login = () => {
       if (res.type === "Authentication/loginSuccess") {
         toast({
           title: "Success",
-          description: res.payload,
+          description: res.payload.res,
           position: "top",
           status: "success",
           duration: 9000,
