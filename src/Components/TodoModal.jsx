@@ -49,7 +49,7 @@ const TodoModal = ({ isOpen, onClose, userID }) => {
       //       addImportantTodo({ ...newTodo, userID: decodedToken?.userID })
       //     )
       //   : dispatch(addNormalTodo({ ...newTodo, userID: decodedToken?.userID }));
-      dispatch(addTodo({ ...newTodo, token, id: Date.now() }));
+      dispatch(addTodo({ ...newTodo, token }));
       // console.log(newTodo);
     }
     onClose();

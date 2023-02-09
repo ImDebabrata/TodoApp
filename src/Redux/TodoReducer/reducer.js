@@ -47,6 +47,12 @@ const todoSlice = createSlice({
     getImportantTodo(state, action) {
       state.importantTodo = action.payload;
     },
+    deleteImportantTodo(state, action) {
+      state.importantTodo.splice(action.payload, 1);
+    },
+    deleteNormalTodo(state, action) {
+      state.normalTodo.splice(action.payload, 1);
+    },
   },
 });
 // export const
@@ -57,6 +63,8 @@ export const {
   addNormalTodo,
   getNormalTodo,
   getImportantTodo,
+  deleteImportantTodo,
+  deleteNormalTodo,
 } = todoSlice.actions;
 
 export const addTodo = (payload) => (dispatch) => {
@@ -75,13 +83,23 @@ export const getTotos = (token) => (dispatch) => {
     .post(`${process.env.REACT_APP_API}/todo`, { token })
     .then((res) => {
       const todos = res.data.todos;
-      console.log("todos:", todos);
       const important = todos.filter((item) => item.category === "important");
-      console.log("important:", important);
       const normal = todos.filter((item) => item.category === "normal");
-      console.log("normal:", normal);
       dispatch(getImportantTodo(important));
       dispatch(getNormalTodo(normal));
+    })
+    .catch((err) => console.log(err));
+};
+
+export const deleteTodo = (payload) => (dispatch) => {
+  axios
+    .delete(`${process.env.REACT_APP_API}/todo/delete/${payload._id}`)
+    .then(() => {
+      if (payload.category === "important") {
+        dispatch(deleteImportantTodo(payload.index));
+      } else {
+        dispatch(deleteNormalTodo(payload.index));
+      }
     })
     .catch((err) => console.log(err));
 };
