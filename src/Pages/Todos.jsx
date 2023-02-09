@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   modifyImportantTodo,
   modifyNormalTodo,
+  getTotos,
 } from "../Redux/TodoReducer/reducer";
 import { Box, Heading, Flex, useDisclosure, Button } from "@chakra-ui/react";
 import TodoList from "../Components/TodoList";
@@ -13,6 +14,8 @@ const Todos = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { importantTodo, normalTodo } = useSelector((store) => store.todo);
   const dispatch = useDispatch();
+  const { token } = useSelector((store) => store.auth);
+  // useSelector((store) => console.log(store.todo));
 
   const handleOnDragEnd = (res) => {
     const {
@@ -51,6 +54,10 @@ const Todos = () => {
     // setImportnctTodo(items);
   };
 
+  useEffect(() => {
+    dispatch(getTotos(token));
+  }, []);
+
   return (
     <Box>
       <Heading m={"20px 0"} size={"lg"}>
@@ -72,7 +79,7 @@ const Todos = () => {
                 {importantTodo.map((item, index) => {
                   return (
                     <TodoList
-                      key={item.id}
+                      key={item._id}
                       props={{ item, type: "red", index }}
                     />
                   );
@@ -93,7 +100,7 @@ const Todos = () => {
                 {normalTodo.map((item, index) => {
                   return (
                     <TodoList
-                      key={item.id}
+                      key={item._id}
                       props={{ item, type: "green", index }}
                     />
                   );

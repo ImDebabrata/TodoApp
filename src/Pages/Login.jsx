@@ -13,8 +13,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { loginUser } from "../Redux/AuthReducer/reducer";
 
 const initialField = {
-  email: "",
-  password: "",
+  email: "datta@gmail.com",
+  password: "12345",
 };
 
 const Login = () => {
@@ -69,11 +69,21 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <FormControl>
           <FormLabel>Email address</FormLabel>
-          <Input name="email" onChange={handleInputChange} type="email" />
+          <Input
+            value={initialField.email}
+            name="email"
+            onChange={handleInputChange}
+            type="email"
+          />
         </FormControl>
         <FormControl>
           <FormLabel>Password</FormLabel>
-          <Input name="password" onChange={handleInputChange} type="password" />
+          <Input
+            value={initialField.password}
+            name="password"
+            onChange={handleInputChange}
+            type="password"
+          />
         </FormControl>
         <Button m={"10px 0"} w={"100%"} type="submit" colorScheme="blue">
           SignIn

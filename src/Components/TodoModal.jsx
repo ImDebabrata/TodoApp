@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useJwt } from "react-jwt";
 import {
   Modal,
   ModalOverlay,
@@ -15,34 +16,41 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { addImportantTodo, addNormalTodo } from "../Redux/TodoReducer/reducer";
+import {
+  addImportantTodo,
+  addNormalTodo,
+  addTodo,
+} from "../Redux/TodoReducer/reducer";
 
 const initialState = {
   title: "",
   category: "",
 };
 
-const TodoModal = ({ isOpen, onClose }) => {
+const TodoModal = ({ isOpen, onClose, userID }) => {
   const [newTodo, setNewTodo] = useState(initialState);
   const dispatch = useDispatch();
-  const user = useSelector((store) => console.log(store));
+  const { token } = useSelector((store) => store.auth);
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-    setNewTodo({ ...newTodo, [name]: value, id: Date.now() });
+    setNewTodo({ ...newTodo, [name]: value });
   };
 
   const handleSubmit = () => {
     if (!newTodo.category || !newTodo.title) {
       alert("Please fill input");
     } else {
-      newTodo.category === "important"
-        ? dispatch(addImportantTodo(newTodo))
-        : dispatch(addNormalTodo(newTodo));
-      console.log(newTodo);
+      // newTodo.category === "important"
+      //   ? dispatch(
+      //       addImportantTodo({ ...newTodo, userID: decodedToken?.userID })
+      //     )
+      //   : dispatch(addNormalTodo({ ...newTodo, userID: decodedToken?.userID }));
+      dispatch(addTodo({ ...newTodo, token, id: Date.now() }));
+      // console.log(newTodo);
     }
     onClose();
   };

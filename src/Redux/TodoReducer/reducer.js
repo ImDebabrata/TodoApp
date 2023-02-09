@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 // const todos = [
 //   { id: "sou", title: "Dummy1" },
@@ -35,10 +36,16 @@ const todoSlice = createSlice({
       state.normalTodo = action.payload;
     },
     addImportantTodo(state, action) {
-      state.importantTodo.push(action.payload);
+      state.importantTodo.push(action?.payload);
     },
     addNormalTodo(state, action) {
-      state.normalTodo.push(action.payload);
+      state.normalTodo.push(action?.payload);
+    },
+    getNormalTodo(state, action) {
+      state.normalTodo = action.payload;
+    },
+    getImportantTodo(state, action) {
+      state.importantTodo = action.payload;
     },
   },
 });
@@ -48,6 +55,35 @@ export const {
   modifyNormalTodo,
   addImportantTodo,
   addNormalTodo,
+  getNormalTodo,
+  getImportantTodo,
 } = todoSlice.actions;
+
+export const addTodo = (payload) => (dispatch) => {
+  return axios
+    .post(`${process.env.REACT_APP_API}/todo/add`, payload)
+    .then((res) =>
+      payload.category === "important"
+        ? dispatch(addImportantTodo(res.data.todo))
+        : dispatch(addNormalTodo(res.data.todo))
+    )
+    .catch((err) => console.log(err.response.data.res));
+};
+
+export const getTotos = (token) => (dispatch) => {
+  axios
+    .post(`${process.env.REACT_APP_API}/todo`, { token })
+    .then((res) => {
+      const todos = res.data.todos;
+      console.log("todos:", todos);
+      const important = todos.filter((item) => item.category === "important");
+      console.log("important:", important);
+      const normal = todos.filter((item) => item.category === "normal");
+      console.log("normal:", normal);
+      dispatch(getImportantTodo(important));
+      dispatch(getNormalTodo(normal));
+    })
+    .catch((err) => console.log(err));
+};
 
 export default todoSlice.reducer;
